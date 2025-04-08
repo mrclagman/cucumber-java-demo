@@ -5,8 +5,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.module.jsv.JsonSchemaValidator;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
 import java.io.File;
 import java.util.HashMap;
@@ -37,7 +35,11 @@ public class UpdateCourseStepDefinitions {
 
         System.out.printf("Request body: %s\n", this.originalRequest);
 
-        world.request = given().contentType(ContentType.JSON).body(originalRequest);
+        world.request = given()
+                .header("X-API-KEY", "Test1234")
+                .contentType(ContentType.JSON)
+                .body(originalRequest);
+
         world.response = world.request.when().post(url);
 
         world.response.then().statusCode(201);
@@ -61,7 +63,11 @@ public class UpdateCourseStepDefinitions {
     public void admin_updates_the_course() {
         String updateUrl = this.url + "/" + courseId;
 
-        world.request = given().contentType(ContentType.JSON).body(this.updateRequest);
+        world.request = given()
+                .header("X-API-KEY", "Test1234")
+                .contentType(ContentType.JSON)
+                .body(this.updateRequest);
+
         world.response = this.world.request.when().put(updateUrl);
 
         System.out.println(world.response.then().extract().response().asString());

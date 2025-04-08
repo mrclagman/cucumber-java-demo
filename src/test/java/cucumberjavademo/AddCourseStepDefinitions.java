@@ -5,8 +5,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.module.jsv.JsonSchemaValidator;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
 import java.io.File;
 import java.util.HashMap;
@@ -40,19 +38,29 @@ public class AddCourseStepDefinitions {
     @When("admin adds the course")
     public void admin_adds_the_course() {
 
-        world.request = given().contentType(ContentType.JSON).body(requestBody);
-        world.response = world.request.when().post(url);
+        world.request = given()
+                .header("X-API-KEY", "Test1234")
+                .contentType(ContentType.JSON)
+                .body(requestBody);
+
+        world.response = world.request
+                .when()
+                .post(url);
     }
     @Then("response body should contain correct schema for addition of course")
     public void response_body_should_contain_correct_schema_for_addition_of_course() {
-        world.response.then().assertThat().body(
+        world.response
+                .then()
+                .assertThat()
+                .body(
                 JsonSchemaValidator.matchesJsonSchema(new File("src/test/resources/schema/addCourse.json"))
         );
     }
     @Then("response body should contain message for successful course addition")
     public void response_body_should_contain_message_for_successful_course_addition() {
 
-        world.response.then()
+        world.response
+                .then()
                 .assertThat()
                 .body("message", equalTo(successfulAddCourseMsg));
     }
